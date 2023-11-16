@@ -261,22 +261,42 @@ class GameEngine:
         captain_y = self.__captain.get_coordinate()[1]
         snake_x = self.__snake.get_coordinate()[0]
         snake_y = self.__snake.get_coordinate()[1]
+        # Which direction should snake move to attack captain
         vertical = snake_x - captain_x
         horizontal = snake_y - captain_y
         new_snake_x = snake_x
         new_snake_y = snake_y
+        # If vertical distance is greater than horizontal distance
+        # The snake move vertically
         if abs(vertical) > abs(horizontal):
             if vertical > 0:
                 new_snake_x = snake_x - 1
             else:
                 new_snake_x = snake_x + 1
+        # If vertical distance is less than horizontal distance
+        # The snake move horizontally
         else:
             if horizontal > 0:
                 new_snake_y = snake_y - 1
             else:
                 new_snake_y = snake_y + 1
         if 0 <= new_snake_x < len(self.__field) and 0 <= new_snake_y < len(self.__field[0]):
-            if isinstance(self.__field[new_snake_x][new_snake_y], Captain):
+            if isinstance(self.__field[new_snake_x][new_snake_y], Rabbit) or isinstance(self.__field[new_snake_x][new_snake_y], Veggie):
+                # Vertical move meet rabbit or veggie so move horizontally
+                if abs(new_snake_x - snake_x) == 1:
+                    new_snake_x = snake_x
+                    if horizontal > 0:
+                        new_snake_y = snake_y - 1
+                    else:
+                        new_snake_y = snake_y + 1
+                # Horizontal move meet rabbit or veggie so move vertically
+                elif abs(new_snake_y - snake_y) == 1:
+                    new_snake_y = snake_y
+                    if vertical > 0:
+                        new_snake_x = snake_x - 1
+                    else:
+                        new_snake_x = snake_x + 1
+            elif isinstance(self.__field[new_snake_x][new_snake_y], Captain):
                 print("Oops! A snake attacked you, you lose the last 5 vegetables!")
                 for _ in range(5):
                     if len(self.__captain.get_collection_list()) != 0:
