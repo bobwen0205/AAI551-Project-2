@@ -281,7 +281,9 @@ class GameEngine:
             else:
                 new_snake_y = snake_y + 1
         if 0 <= new_snake_x < len(self.__field) and 0 <= new_snake_y < len(self.__field[0]):
-            if isinstance(self.__field[new_snake_x][new_snake_y], Rabbit) or isinstance(self.__field[new_snake_x][new_snake_y], Veggie):
+            times = 0
+            while isinstance(self.__field[new_snake_x][new_snake_y], Rabbit) or isinstance(self.__field[new_snake_x][new_snake_y], Veggie):
+                times += 1
                 # Vertical move meet rabbit or veggie so move horizontally
                 if abs(new_snake_x - snake_x) == 1:
                     new_snake_x = snake_x
@@ -296,7 +298,9 @@ class GameEngine:
                         new_snake_x = snake_x - 1
                     else:
                         new_snake_x = snake_x + 1
-            elif isinstance(self.__field[new_snake_x][new_snake_y], Captain):
+                if times == 4:
+                    break
+            if isinstance(self.__field[new_snake_x][new_snake_y], Captain):
                 print("Oops! A snake attacked you, you lose the last 5 vegetables!")
                 for _ in range(5):
                     if len(self.__captain.get_collection_list()) != 0:
