@@ -1,3 +1,6 @@
+# Author: Mingzhi Wen
+# Date: Nov 16, 2023
+# Description: This program is the GameEngine of game Captain Veggie
 import os
 from Veggie import Veggie
 from Captain import Captain
@@ -7,10 +10,13 @@ import random
 import pickle
 
 class GameEngine:
+    # Constants for the game
     __NUMBEROFVEGGIES = 30
     __NUMBEROFRABBITS = 5
     __HIGHSCOREFILE = "highscore.data"
+
     def __init__(self):
+        # Initialize the game variables
         self.__field = []
         self.__rabbits = []
         self.__captain = None
@@ -19,6 +25,7 @@ class GameEngine:
         self.__snake = None
 
     def initVeggies(self):
+        # Prompt user for vegetable point file and initialize vegetables
         file_not_exist = True
         while file_not_exist:
             file_name = input("Please enter the name of the vegetable point file: ");
@@ -26,6 +33,8 @@ class GameEngine:
                 print(f"{file_name} does not exist!", end="")
             else:
                 file_not_exist = False
+
+        # Read vegetable point file and create Veggie objects
         with open(file_name, 'r') as my_file:
             line1 = my_file.readline().strip().split(',')
             rows = int(line1[1])
@@ -38,6 +47,8 @@ class GameEngine:
                 veggie_object = Veggie([name, symbol], point)
                 self.__vegetables.append(veggie_object)
             my_file.close()
+
+        # Distribute vegetables randomly on the field
         types_of_vegetable = len(self.__vegetables)
         split_points = sorted(
             random.sample(range(1, self.__NUMBEROFVEGGIES - (types_of_vegetable - 1)), types_of_vegetable - 1))
@@ -55,6 +66,7 @@ class GameEngine:
                         empty_space = False
 
     def initCaptain(self):
+        # Initialize Captain on a random position in the field
         empty_space = True
         while empty_space:
             x = random.randrange(len(self.__field))
@@ -77,6 +89,7 @@ class GameEngine:
                     empty_space = False
 
     def initSnake(self):
+        # Initialize Snake on a random position in the field
         empty_space = True
         while empty_space:
             x = random.randrange(len(self.__field))
@@ -87,12 +100,14 @@ class GameEngine:
                 empty_space = False
 
     def initializeGame(self):
+        # Call initialization methods to set up the game
         self.initVeggies()
         self.initCaptain()
         self.initRabbits()
         self.initSnake()
 
     def remainingVeggies(self):
+        # Count the number of remaining vegetables in the field
         nums_of_vegetables = 0
         for row in self.__field:
             for obj in row:
@@ -101,6 +116,7 @@ class GameEngine:
         return nums_of_vegetables
 
     def intro(self):
+        # Display the game introduction
         print("Welcome to Captain Veggie!")
         print("The rabbits have invaded your garden and you must harvest\n"
               "as many vegetables as possible before the rabbits eat them\n"
@@ -113,6 +129,7 @@ class GameEngine:
         print("Good luck!")
 
     def printField(self):
+        # Display the game field
         for _ in range(len(self.__field[0]) * 3 + 1):
             print('#', end="")
         print('#')
@@ -135,9 +152,11 @@ class GameEngine:
         print('#')
 
     def getScore(self):
+        # Return the player's current score
         return self.__score
 
     def moveRabbits(self):
+        # Move Rabbit objects randomly on the field
         delta_x = [0, -1, 1, 0, 0, -1, -1, 1, 1]
         delta_y = [0, 0, 0, -1, 1, -1, 1, -1, 1]
         for rabbit in self.__rabbits:
@@ -165,6 +184,7 @@ class GameEngine:
                     self.__field[x][y] = None
 
     def moveCptVertical(self, direction):
+        # Move Captain vertically based on user input
         x = self.__captain.get_coordinate()[0]
         y = self.__captain.get_coordinate()[1]
         if direction == 'W' or direction == 'w':
@@ -186,6 +206,7 @@ class GameEngine:
             print("Don't step on the bunnies!")
 
     def moveCptHorizontal(self, direction):
+        # Move Captain horizontally based on user input
         x = self.__captain.get_coordinate()[0]
         y = self.__captain.get_coordinate()[1]
         if direction == 'A' or direction == 'a':
@@ -207,6 +228,7 @@ class GameEngine:
             print("Don't step on the bunnies!")
 
     def moveCaptain(self):
+        # Move the Captain based on user input
         x = self.__captain.get_coordinate()[0]
         y = self.__captain.get_coordinate()[1]
         direction = input("Would you like to move up(W), down(S), left(A), or right(D):")
@@ -234,6 +256,7 @@ class GameEngine:
             print(f"{direction} is not a valid option")
 
     def moveSnake(self):
+        # Move the Snake toward the Captain
         captain_x = self.__captain.get_coordinate()[0]
         captain_y = self.__captain.get_coordinate()[1]
         snake_x = self.__snake.get_coordinate()[0]
@@ -267,6 +290,7 @@ class GameEngine:
                 self.__field[snake_x][snake_y] = None
 
     def gameOver(self):
+        # Display game over message and player's performance
         print("GAME OVER!")
         print("You managed to harvest the following vegetables:")
         for vegetable in self.__captain.get_collection_list():
@@ -274,6 +298,7 @@ class GameEngine:
         print(f"Your score was: {self.__score}")
 
     def highScore(self):
+        # Display and update the high score list
         high_score_list = []
         if os.path.exists(self.__HIGHSCOREFILE):
             with open(self.__HIGHSCOREFILE, 'rb') as myFile:
