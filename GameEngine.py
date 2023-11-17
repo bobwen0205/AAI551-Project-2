@@ -50,10 +50,13 @@ class GameEngine:
 
         # Distribute vegetables randomly on the field
         types_of_vegetable = len(self.__vegetables)
-        split_points = sorted(
-            random.sample(range(1, self.__NUMBEROFVEGGIES - (types_of_vegetable - 1)), types_of_vegetable - 1))
-        nums_of_one_vegetable = [split_points[0]] + [split_points[i] - split_points[i - 1] for i in
-                                      range(1, types_of_vegetable - 1)] + [self.__NUMBEROFVEGGIES - split_points[-1]]
+        nums_of_one_vegetable = []
+        if self.__NUMBEROFVEGGIES > types_of_vegetable:
+            split_points = sorted(random.sample(range(1, self.__NUMBEROFVEGGIES - (types_of_vegetable - 1)), types_of_vegetable - 1))
+            nums_of_one_vegetable = [split_points[0]] + [split_points[i] - split_points[i - 1] for i in range(1, types_of_vegetable - 1)] + [self.__NUMBEROFVEGGIES - split_points[-1]]
+        else:
+            for _ in range(self.__NUMBEROFVEGGIES):
+                nums_of_one_vegetable.append(1)
         for i in range(len(nums_of_one_vegetable)):
             num = nums_of_one_vegetable[i]
             for _ in range(num):
@@ -287,16 +290,16 @@ class GameEngine:
                 # Vertical move meet rabbit or veggie so move horizontally
                 if abs(new_snake_x - snake_x) == 1:
                     new_snake_x = snake_x
-                    if horizontal > 0:
+                    if horizontal > 0 and 0 <= snake_y - 1 < len(self.__field[0]):
                         new_snake_y = snake_y - 1
-                    else:
+                    elif horizontal <= 0 and 0 <= snake_y + 1 < len(self.__field[0]):
                         new_snake_y = snake_y + 1
                 # Horizontal move meet rabbit or veggie so move vertically
                 elif abs(new_snake_y - snake_y) == 1:
                     new_snake_y = snake_y
-                    if vertical > 0:
+                    if vertical > 0 and 0 <= snake_x - 1 < len(self.__field):
                         new_snake_x = snake_x - 1
-                    else:
+                    elif vertical <= 0 and 0 <= snake_x + 1 < len(self.__field):
                         new_snake_x = snake_x + 1
                 if times == 4:
                     break

@@ -19,8 +19,8 @@ def main():
         # Display the game field
         game.printField()
         # Move Rabbits, Captain, and Snake in the game
-        game.moveRabbits()
         game.moveCaptain()
+        game.moveRabbits()
         game.moveSnake()
         # Update the count of remaining vegetables for the next iteration
         remaining_vegetables = game.remainingVeggies()
